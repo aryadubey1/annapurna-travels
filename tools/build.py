@@ -2,7 +2,8 @@
 """Builds the static Annapurna Travels site into ../site (HTML + i18n.js). Run: python3 tools/build.py"""
 import json, os, sys
 sys.path.insert(0, os.path.dirname(__file__))
-from content import S, FLEET
+from content import S, FLEET, GOOGLE, REVIEWS
+import html as H
 
 OUT = os.path.join(os.path.dirname(__file__), '..', 'site')
 PHONE, PHONE_TXT, WA = '+919827054100', '+91 98270 54100', '919827054100'
@@ -11,7 +12,7 @@ IG = 'https://www.instagram.com/annapurna.travels/'
 MAP_Q = 'Annapurna+Tour+and+Travels,+Raisen+Road,+Kalpana+Nagar,+Bhopal'
 MAP_TERM = 'Annapurna+bus+terminal+bhopal'
 SITE = 'https://annapurna.clarifyweb.com'
-VER = '4'
+VER = '5'
 
 def t(k, tag='span', cls='', attrs=''):
     c = f' class="{cls}"' if cls else ''
@@ -277,6 +278,37 @@ def clients_marquee():
     logos = ''.join(f'<img src="/img/clients/c{i:02d}.webp" alt="" width="140" height="72">' for i in range(1, 27))
     return f'<div class="marq" aria-label="Client logos"><div class="marq-track">{logos}{logos}</div></div>'
 
+G_LOGO = '<svg class="g-logo" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>'
+STAR = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L10 15l-5.2 2.7 1-5.9L1.5 7.7l5.9-.8z"/></svg>'
+def stars(n, frac=None):
+    w = (frac if frac is not None else n) / 5 * 100
+    return f'<span class="stars" role="img" aria-label="{frac or n} out of 5"><span class="stars-bg">{STAR * 5}</span><span class="stars-fg" style="width:{w:.0f}%">{STAR * 5}</span></span>'
+
+def reviews():
+    cards = ''
+    for name, n, guide, ctx, text in REVIEWS:
+        ini = ''.join(w[0] for w in name.split()[:2])
+        body = '</p><p>'.join(H.escape(x) for x in text.split('\n') if x.strip())
+        long = ' long' if len(text) > 230 else ''
+        g = f' · {t("rv.guide")}' if guide else ''
+        cards += f'''<figure class="rv reveal{long}">
+  <div class="rv-top">{stars(n)}{G_LOGO}</div>
+  <blockquote class="rv-text" lang="en"><p>{body}</p></blockquote>
+  {'<button class="rv-more" type="button" aria-expanded="false">' + t('rv.more') + '</button>' if long else ''}
+  <figcaption><span class="rv-av">{ini}</span><span><b>{H.escape(name)}</b><small>{H.escape(ctx)}{g}</small></span></figcaption>
+</figure>'''
+    return f'''
+<section class="sec reviews-sec">
+  <div class="wrap">
+    <div class="rv-head">
+      {sec_head('rv.eyebrow', 'rv.title')}
+      <a class="g-badge reveal" href="{GOOGLE['url']}" target="_blank" rel="noopener">{G_LOGO}<span class="g-num">{GOOGLE['rating']}</span><span class="g-meta">{stars(4, float(GOOGLE['rating']))}<small>{t('rv.count')}</small></span></a>
+    </div>
+    <div class="rvs scroller">{cards}</div>
+    <div class="rv-foot"><a class="more" href="{GOOGLE['url']}" target="_blank" rel="noopener">{t('rv.all')}{ic('arrow')}</a><small>{t('rv.note')}</small></div>
+  </div>
+</section>'''
+
 # ---------- pages
 def home():
     services = [('heart', 'sv.wed', 'interior-blue'), ('brief', 'sv.corp', 'coach-pair'), ('school', 'sv.school', 'coach-45'), ('route', 'sv.tour', 'dest-ujjain')]
@@ -339,6 +371,7 @@ def home():
     </div>
   </div>
 </section>
+{reviews()}
 <section class="sec sec-tint">
   <div class="wrap">{sec_head('gl.eyebrow', 'gl.title')}{gallery(GALLERY[:8])}</div>
 </section>
@@ -423,6 +456,7 @@ def groups():
     <ol class="steps">{steps}</ol>
   </div>
 </section>
+{reviews()}
 <section class="sec sec-tint" id="enquiry">
   <div class="wrap narrow"><div class="card-form reveal"><h2>{t('ct.form')}</h2>{quote_form(fid='qgroup')}</div></div>
 </section>'''

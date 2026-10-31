@@ -190,5 +190,15 @@
     document.addEventListener('focusout', function () { setTimeout(function () { if (!document.activeElement.matches('input:not([type=radio]),textarea')) mbar.classList.remove('away'); }, 50); });
   }
 
+  /* ---------- review read-more */
+  $$('.rv-more').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var card = b.closest('.rv'), open = card.classList.toggle('open');
+      b.setAttribute('aria-expanded', String(open));
+      var d = (window.I18N || {})[document.documentElement.lang] || {};
+      var span = b.querySelector('[data-i18n]'); span.setAttribute('data-i18n', open ? 'rv.less' : 'rv.more'); span.innerHTML = d[open ? 'rv.less' : 'rv.more'] || span.innerHTML;
+    });
+  });
+
   var yr = $('#yr'); if (yr) yr.textContent = new Date().getFullYear();
 })();

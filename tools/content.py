@@ -74,6 +74,16 @@ S = {
 'f.less': ('Fewer passengers', 'कम यात्री'), 'f.more_p': ('More passengers', 'ज़्यादा यात्री'),
 'fl.illus': ('Illustration · photo coming soon', 'चित्र · फ़ोटो जल्द'),
 
+'rv.eyebrow': ('Google reviews', 'गूगल रिव्यू'),
+'rv.title': ('What travellers say about us', 'यात्री हमारे बारे में क्या कहते हैं'),
+'rv.count': ('from 129 reviews on Google', 'गूगल पर 129 रिव्यू से'),
+'rv.all': ('Read all reviews on Google', 'गूगल पर सभी रिव्यू पढ़ें'),
+'rv.more': ('Read more', 'और पढ़ें'),
+'rv.less': ('Show less', 'कम दिखाएँ'),
+'rv.guide': ('Local Guide', 'लोकल गाइड'),
+'rv.src': ('Google review', 'गूगल रिव्यू'),
+'rv.note': ('Reviews shown as written by customers on Google Maps.', 'रिव्यू वैसे ही दिखाए गए हैं जैसे ग्राहकों ने गूगल मैप्स पर लिखे।'),
+
 # ---- stats
 'st.year': ('Founded in Bhopal', 'भोपाल में स्थापना'),
 'st.vehicles': ('Vehicles in the fleet', 'फ़्लीट में वाहन'),
@@ -298,4 +308,13 @@ FLEET = [
  ('c-bolero','car','Mahindra Bolero Neo','महिंद्रा बोलेरो नियो','7','car-bolero',['SUV']),
  ('c-tavera','car','Chevrolet Tavera','शेवरले टवेरा','9','car-tavera',['MPV']),
  ('c-dzire','car','Swift Dzire Tour S','स्विफ़्ट डिज़ायर टूर S','4','car-dzire',['Sedan']),
+]
+
+# Real Google Maps reviews (fetched 2026-10-31 from the client's listing, 4.1 from 129 reviews). Verbatim.
+GOOGLE = {'rating': '4.1', 'count': '129', 'url': 'https://maps.google.com/?cid=10357755426036503671'}
+REVIEWS = [
+ ('Rituraj Singh', 5, False, 'Family trip by car', "We booked a car for a family trip From Annapurna Tours & Travels. It was a smooth and comfortable ride. The car came on time and was clean The driver knew the route well and we reached on time. he drove safely and talked nicely, he was friendly and helped me with everything I needed. I was happy with the journey, Their service was very nice, they are on time and very professional, Rates are also fair. Annapurna Travels gave us a very good service. Will book again. Best travels in Bhopal!"),
+ ('Lakshya Gupta', 5, True, 'Bus booking', "Best Bus Service Provider In Bhopal 💯\nBus were Maintained Properly\nDrivers are well trained\nIf You want tension Free Service Then Only Book Annapurna Travel"),
+ ('Sapna Shah', 4, False, 'Group trip with seniors', "We had a very good experience with Annapurna Tours and Travels. The bus driver was very professional and polite. He drove with a good speed and managed the traffic jams really well... We had senior citizens on board and they felt pretty safe and secure during the journey. Thank you team for making our travel safe and memorable."),
+ ('Aditya Malviya', 5, True, 'Wedding · Bhopal → Noida', "We booked bus from Annapoorna Travels for three marriage functions..\nWe went to Noida from bhopal..\n\nWe found the bus was comfortable and the driver too professional. They picked up us on time from our place, even though reaching home was a bit difficult..\n\nThe driver drove the bus carefully and professionally..\n\nThe deal was also done in a professional way, and they walked the talk what they did..\n\nI found a pleasant experience with them"),
 ]
