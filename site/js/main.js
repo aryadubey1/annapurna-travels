@@ -85,7 +85,9 @@
       var paint = function () {
         if (!dt.value) { box.classList.remove('has'); txt.setAttribute('data-i18n', 'f.pick'); var d = (window.I18N || {})[document.documentElement.lang]; if (d) txt.innerHTML = d['f.pick']; return; }
         box.classList.add('has'); txt.removeAttribute('data-i18n');
-        txt.textContent = new Date(dt.value + 'T00:00').toLocaleDateString(document.documentElement.lang === 'hi' ? 'hi-IN' : 'en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+        var day = new Date(dt.value + 'T00:00'), loc = document.documentElement.lang === 'hi' ? 'hi-IN' : 'en-IN';
+        txt.textContent = day.toLocaleDateString(loc, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+        if (txt.scrollWidth > txt.clientWidth) txt.textContent = day.toLocaleDateString(loc, { day: 'numeric', month: 'short', year: 'numeric' });  // narrow phone: drop the weekday
       };
       dt.addEventListener('change', function () { paint(); var f = dt.closest('.fld'); f && f.classList.remove('bad'); });
       dt.addEventListener('click', function () { try { dt.showPicker(); } catch (e) {} });

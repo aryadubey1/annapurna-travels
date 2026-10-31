@@ -490,3 +490,13 @@ html{-webkit-tap-highlight-color:transparent}
 .stars{width:max-content;justify-self:start}
 .rv-text,.rv-text p{font:400 .95rem/1.62 var(--f-body);font-style:normal;background:none;border:0;padding:0;border-radius:0;color:var(--text)}
 .rv-text{margin:0}
+/* date box: shrink to its column instead of spilling into the passengers stepper */
+.fld{grid-template-columns:minmax(0,1fr)}
+.datebox,.stepper{min-width:0}
+.datebox{overflow:hidden}
+.datebox .date-txt{flex:1 1 auto;min-width:0}
+.fld .stepper input{min-width:0;flex:1 1 auto;width:0}
+/* autofill (Chrome/Android blue, Safari/iOS yellow): keep the cream boxes */
+.fld input:-webkit-autofill,.fld input:-webkit-autofill:hover,.fld input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 1000px var(--paper) inset;-webkit-text-fill-color:var(--text);caret-color:var(--text);transition:background-color 99999s}
+.fld input:autofill{background:var(--paper)}
+@media (max-width:479px){.qgrid .fld{grid-column:1/-1}}  /* phones: date and passengers get a full row each */

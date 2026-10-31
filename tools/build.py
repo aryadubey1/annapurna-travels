@@ -12,7 +12,7 @@ IG = 'https://www.instagram.com/annapurna.travels/'
 MAP_Q = 'Annapurna+Tour+and+Travels,+Raisen+Road,+Kalpana+Nagar,+Bhopal'
 MAP_TERM = 'Annapurna+bus+terminal+bhopal'
 SITE = 'https://annapurna.clarifyweb.com'
-VER = '5'
+VER = '6'
 
 def t(k, tag='span', cls='', attrs=''):
     c = f' class="{cls}"' if cls else ''
