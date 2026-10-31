@@ -11,7 +11,7 @@ IG = 'https://www.instagram.com/annapurna.travels/'
 MAP_Q = 'Annapurna+Tour+and+Travels,+Raisen+Road,+Kalpana+Nagar,+Bhopal'
 MAP_TERM = 'Annapurna+bus+terminal+bhopal'
 SITE = 'https://annapurna.clarifyweb.com'
-VER = '3'
+VER = '4'
 
 def t(k, tag='span', cls='', attrs=''):
     c = f' class="{cls}"' if cls else ''
@@ -60,6 +60,8 @@ P = {
  'route': '<circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/>',
  'tag': '<path d="M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.7 8.7a2.4 2.4 0 0 0 3.4 0l6.6-6.6a2.4 2.4 0 0 0 0-3.4z"/><circle cx="7.5" cy="7.5" r="1.5"/>',
  'check': '<path d="M20 6 9 17l-5-5"/>',
+ 'plane': '<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>',
+ 'flag': '<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7"/>',
  'insta': '<rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5"/>',
 }
 WA_SVG = '<svg class="ic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.3zM12 21.8c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.7 1 1-3.6-.2-.4A9.8 9.8 0 1 1 12 21.8zm8.4-18.2A11.8 11.8 0 0 0 1.6 17.9L0 24l6.3-1.6A11.8 11.8 0 0 0 24 12c0-3.2-1.2-6.1-3.5-8.4z"/></svg>'
@@ -90,7 +92,7 @@ def header(active):
         <button type="button" data-lang="en" aria-pressed="true">EN</button><button type="button" data-lang="hi" aria-pressed="false" lang="hi">हिं</button>
       </div>
       <a class="btn btn-sm btn-coral hide-sm" href="tel:{PHONE}">{ic('phone')}<span>{PHONE_TXT}</span></a>
-      <button class="burger" id="burger" aria-expanded="false" aria-controls="drawer" aria-label="Menu">{ic('menu')}</button>
+      <button class="burger" id="burger" aria-expanded="false" aria-controls="drawer" aria-label="Menu">{ic('menu', 'ic ic-m')}{ic('x', 'ic ic-x')}</button>
     </div>
   </div>
 </header>
@@ -201,21 +203,25 @@ def sec_head(eb, title, lead=None, center=False):
     return f'<div class="shead{" center" if center else ""} reveal"><p class="eyebrow">{t(eb)}</p><h2>{t(title)}</h2>{l}</div>'
 
 def quote_form(compact=False, fid='q'):
-    trip = ''.join(f'<option value="{S[k][0]}" data-i18n="{k}">{S[k][0]}</option>' for k in ['o.wedding','o.corporate','o.school','o.tour','o.airport','o.other'])
-    veh = ''.join(f'<option value="{S[k][0]}" data-i18n="{k}">{S[k][0]}</option>' for k in ['o.bus','o.traveller','o.car','o.unsure'])
+    trips = [('heart','tc.wedding'),('brief','tc.corp'),('school','tc.school'),('route','tc.tour'),('plane','tc.airport'),('spark','tc.other')]
+    trip = ''.join(f'<label class="chip-opt"><input type="radio" name="trip" value="{S[k][0]}"{" checked" if n == 0 else ""}><span>{ic(i)}{t(k)}</span></label>' for n, (i, k) in enumerate(trips))
+    vehs = [('v.bus','Bus'),('v.trav','Tempo traveller'),('v.car','Car / SUV'),('v.unsure','Not sure, please suggest')]
+    veh = ''.join(f'<label class="veh-opt"><input type="radio" name="vehicle" value="{v}"{" checked" if n == 0 else ""}><span><b data-i18n="{k}">{S[k][0]}</b><small data-i18n="{k}.s">{S[k + ".s"][0]}</small></span></label>' for n, (k, v) in enumerate(vehs))
     extra = '' if compact else f'''
       <label class="fld"><span data-i18n="f.name">{S['f.name'][0]}</span><input name="name" autocomplete="name" required {ph('ph.name')}></label>
       <label class="fld"><span data-i18n="f.phone">{S['f.phone'][0]}</span><input name="phone" type="tel" inputmode="tel" autocomplete="tel" pattern="[0-9+ ]{{10,15}}" required {ph('ph.phone')}></label>
       <label class="fld span2"><span data-i18n="f.msg">{S['f.msg'][0]}</span><textarea name="msg" rows="3"></textarea></label>'''
     return f'''
 <form class="qform{' compact' if compact else ''}" id="{fid}" novalidate>
+  <fieldset class="fset"><legend data-i18n="f.trip">{S['f.trip'][0]}</legend><div class="chip-row">{trip}</div></fieldset>
+  <fieldset class="fset"><legend data-i18n="f.vehicle">{S['f.vehicle'][0]}</legend><div class="veh-row">{veh}</div></fieldset>
   <div class="qgrid">
-    <label class="fld"><span data-i18n="f.trip">{S['f.trip'][0]}</span><select name="trip">{trip}</select></label>
-    <label class="fld"><span data-i18n="f.vehicle">{S['f.vehicle'][0]}</span><select name="vehicle">{veh}</select></label>
-    <label class="fld"><span data-i18n="f.from">{S['f.from'][0]}</span><input name="from" required {ph('ph.from')}></label>
-    <label class="fld"><span data-i18n="f.to">{S['f.to'][0]}</span><input name="to" required {ph('ph.to')}></label>
-    <label class="fld"><span data-i18n="f.date">{S['f.date'][0]}</span><input name="date" type="date" required></label>
-    <label class="fld"><span data-i18n="f.pax">{S['f.pax'][0]}</span><input name="pax" type="number" min="1" max="500" inputmode="numeric" required {ph('ph.pax')}></label>{extra}
+    <label class="fld"><span data-i18n="f.from">{S['f.from'][0]}</span><span class="inp-ic">{ic('pin')}<input name="from" required autocomplete="address-level2" {ph('ph.from')}></span></label>
+    <label class="fld"><span data-i18n="f.to">{S['f.to'][0]}</span><span class="inp-ic">{ic('flag')}<input name="to" required {ph('ph.to')}></span></label>
+    <div class="fld"><span data-i18n="f.date">{S['f.date'][0]}</span>
+      <span class="datebox">{ic('cal')}<span class="date-txt" data-i18n="f.pick">{S['f.pick'][0]}</span><input name="date" type="date" required aria-label="{S['f.date'][0]}"></span></div>
+    <div class="fld"><span data-i18n="f.pax">{S['f.pax'][0]}</span>
+      <span class="stepper"><button type="button" data-step="-1" aria-label="{S['f.less'][0]}">−</button><input name="pax" type="number" min="1" max="500" inputmode="numeric" required {ph('ph.pax')}><button type="button" data-step="1" aria-label="{S['f.more_p'][0]}">+</button></span></div>{extra}
   </div>
   <p class="qerr" role="alert" hidden>{t('f.err')}</p>
   <button class="btn btn-wa btn-block" type="submit">{ic('wa')}{t('f.send')}</button>
@@ -231,7 +237,9 @@ def fleet_cards(items):
     out = []
     for fid, cat, en, hi, seats, im, tags in items:
         S[f'fleet.{fid}'] = (en, hi)
-        media = img(im, en, 'fc-img', sizes='(max-width:700px) 85vw, 400px') if im else \
+        if im and im.startswith('svg:'):
+            media = f'<img class="fc-img" src="/img/{im[4:]}.svg" alt="{en}" loading="lazy"><span class="fc-note" data-i18n="fl.illus">{S["fl.illus"][0]}</span>'
+        else: media = img(im, en, 'fc-img', sizes='(max-width:700px) 85vw, 400px') if im else \
             f'<div class="fc-ph">{ic("users")}<span data-i18n="fl.photo_soon">{S["fl.photo_soon"][0]}</span></div>'
         chips = ''.join(f'<span class="chip">{x}</span>' for x in tags)
         out.append(f'''<article class="fc reveal" data-cat="{cat}">

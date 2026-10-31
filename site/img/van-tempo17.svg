@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Force Tempo Traveller 17 seater illustration">
+<defs>
+ <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbe9d7"/><stop offset=".7" stop-color="#f6efe3"/><stop offset="1" stop-color="#efe5d4"/></linearGradient>
+ <linearGradient id="gl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2b3990"/><stop offset="1" stop-color="#121a3d"/></linearGradient>
+ <linearGradient id="bd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e9e6f0"/></linearGradient>
+</defs>
+<rect width="400" height="300" fill="url(#sky)"/>
+<circle cx="318" cy="70" r="34" fill="#f4a53c" opacity=".35"/>
+<path d="M0 196 Q60 176 120 190 T240 186 T400 192 V300 H0Z" fill="#eadfcb"/>
+<rect y="240" width="400" height="60" fill="#e3d7c2"/>
+<g opacity=".7"><rect x="20" y="268" width="50" height="5" rx="2" fill="#fff"/><rect x="120" y="268" width="50" height="5" rx="2" fill="#fff"/><rect x="220" y="268" width="50" height="5" rx="2" fill="#fff"/><rect x="320" y="268" width="50" height="5" rx="2" fill="#fff"/></g>
+<ellipse cx="232.0" cy="242" rx="154.0" ry="9" fill="#121a3d" opacity=".18"/>
+<path d="M92 214 L92 96 Q92 84 104 84 L310 84 Q324 84 332 94 L348 140 L366 147 Q372 150 372 159 L372 204 Q372 214 362 214 Z" fill="url(#bd)" stroke="#c9c6d6" stroke-width="1.5"/>
+<rect x="106.0" y="96" width="35.2" height="36" rx="5" fill="url(#gl)"/><rect x="147.2" y="96" width="35.2" height="36" rx="5" fill="url(#gl)"/><rect x="188.4" y="96" width="35.2" height="36" rx="5" fill="url(#gl)"/><rect x="229.6" y="96" width="35.2" height="36" rx="5" fill="url(#gl)"/><rect x="270.8" y="96" width="35.2" height="36" rx="5" fill="url(#gl)"/><path d="M314 96 L326 96 Q332 96 336 102 L346 132 L314 132 Z" fill="url(#gl)"/>
+<rect x="92" y="144" width="270" height="9" fill="#e8553a"/>
+<rect x="92" y="156" width="270" height="3" fill="#1f2d6e"/>
+<text x="110" y="186" font-family="Manrope,Arial,sans-serif" font-weight="800" font-size="15" letter-spacing="3" fill="#1f2d6e">ANNAPURNA</text>
+<line x1="308" y1="138" x2="308" y2="206" stroke="#cfcbd9" stroke-width="2"/>
+<rect x="360" y="150" width="10" height="9" rx="3" fill="#f4a53c"/>
+<rect x="90" y="192" width="8" height="12" rx="2" fill="#e8553a"/>
+<rect x="92" y="208" width="280" height="8" rx="4" fill="#3a3f57"/>
+<circle cx="154" cy="214" r="27" fill="#2a3150"/><circle cx="154" cy="214" r="21" fill="#1a1f36"/><circle cx="154" cy="214" r="9" fill="#cfd3dd"/><circle cx="154" cy="214" r="3" fill="#1a1f36"/><circle cx="308" cy="214" r="27" fill="#2a3150"/><circle cx="308" cy="214" r="21" fill="#1a1f36"/><circle cx="308" cy="214" r="9" fill="#cfd3dd"/><circle cx="308" cy="214" r="3" fill="#1a1f36"/>
+</svg>

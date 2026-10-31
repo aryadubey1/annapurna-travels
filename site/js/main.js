@@ -14,6 +14,7 @@
     $$('[data-i18n-ph]').forEach(function (el) { var v = d[el.getAttribute('data-i18n-ph')]; if (v != null) el.placeholder = v; });
     $$('.lang button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.lang === lang)); });
     store.set('lang', lang);
+    document.dispatchEvent(new CustomEvent('langchange', { detail: lang }));
   }
   $$('.lang button').forEach(function (b) { b.addEventListener('click', function () { setLang(b.dataset.lang); }); });
   if (store.get('lang') === 'hi') setLang('hi');
@@ -48,6 +49,7 @@
       var f = b.dataset.filter;
       $$('.fc', grid).forEach(function (c) { c.hidden = !(f === 'all' || c.dataset.cat === f); if (!c.hidden) c.classList.add('in'); });
       grid.scrollTo && grid.scrollTo({ left: 0, behavior: 'smooth' });
+      grid.dispatchEvent(new Event('filtered'));
     });
   });
 
@@ -55,6 +57,7 @@
   function collect(form) {
     var ok = true, data = {};
     $$('input,select,textarea', form).forEach(function (el) {
+      if (el.type === 'radio') { if (el.checked) data[el.name] = el.value; return; }
       var fld = el.closest('.fld'), v = el.value.trim();
       var bad = el.required && (!v || (el.pattern && !new RegExp('^' + el.pattern + '$').test(v)));
       if (fld) fld.classList.toggle('bad', !!bad);
@@ -62,7 +65,7 @@
       data[el.name] = v;
     });
     $('.qerr', form).hidden = ok;
-    if (!ok) { var first = $('.bad input,.bad select', form); first && first.focus(); }
+    if (!ok) { var first = $('.bad input,.bad select', form); if (first) { first.closest('.fld').scrollIntoView({ block: 'center', behavior: 'smooth' }); if (first.type !== 'date') first.focus({ preventScroll: true }); } }
     return ok ? data : null;
   }
   function message(d) {
@@ -75,7 +78,29 @@
     return lines.join('\n');
   }
   $$('.qform').forEach(function (form) {
-    var dt = $('input[type=date]', form); if (dt) dt.min = new Date().toISOString().slice(0, 10);
+    var dt = $('input[type=date]', form);
+    if (dt) {
+      dt.min = new Date().toISOString().slice(0, 10);
+      var box = dt.closest('.datebox'), txt = $('.date-txt', box);
+      var paint = function () {
+        if (!dt.value) { box.classList.remove('has'); txt.setAttribute('data-i18n', 'f.pick'); var d = (window.I18N || {})[document.documentElement.lang]; if (d) txt.innerHTML = d['f.pick']; return; }
+        box.classList.add('has'); txt.removeAttribute('data-i18n');
+        txt.textContent = new Date(dt.value + 'T00:00').toLocaleDateString(document.documentElement.lang === 'hi' ? 'hi-IN' : 'en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+      };
+      dt.addEventListener('change', function () { paint(); var f = dt.closest('.fld'); f && f.classList.remove('bad'); });
+      dt.addEventListener('click', function () { try { dt.showPicker(); } catch (e) {} });
+      document.addEventListener('langchange', paint);
+    }
+    $$('.stepper', form).forEach(function (st) {
+      var inp = $('input', st);
+      $$('button', st).forEach(function (b) {
+        b.addEventListener('click', function () {
+          var v = parseInt(inp.value, 10) || 0, step = +b.dataset.step;
+          v = Math.min(500, Math.max(1, v + step * (v + step > 20 ? 5 : 1)));
+          inp.value = v; inp.closest('.fld').classList.remove('bad');
+        });
+      });
+    });
     form.addEventListener('submit', function (e) {
       e.preventDefault(); var d = collect(form); if (!d) return;
       window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(message(d)), '_blank', 'noopener');
@@ -96,7 +121,7 @@
     a.addEventListener('click', function () { store.set('to', a.dataset.to); });
   });
   var to = store.get('to'), toIn = $('#qcontact input[name=to]');
-  if (to && toIn && location.hash === '#enquiry') { toIn.value = to; $('#qcontact select[name=trip]').value = 'Tour / pilgrimage'; }
+  if (to && toIn && location.hash === '#enquiry') { toIn.value = to; var r = $('#qcontact input[name=trip][value="Tour / Yatra"]'); if (r) r.checked = true; }
 
   /* ---------- lightbox */
   var lb = $('#lb'), lbImg = $('img', lb), items = [], idx = 0;
@@ -119,6 +144,51 @@
   var sx = 0;
   lb.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; }, { passive: true });
   lb.addEventListener('touchend', function (e) { var dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 50) show(idx + (dx < 0 ? 1 : -1)); });
+
+  /* ---------- count-up numbers (subtle) */
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var nums = $$('[data-count]');
+  if (!reduce && 'IntersectionObserver' in window) {
+    var cio = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return; cio.unobserve(e.target);
+        var el = e.target, raw = el.dataset.count, end = parseInt(raw, 10), suf = raw.replace(/[0-9]/g, '');
+        var start = end > 1000 ? end - 39 : 0, t0 = null, dur = 1400;
+        (function tick(ts) {
+          t0 = t0 || ts; var p = Math.min(1, (ts - t0) / dur), k = 1 - Math.pow(1 - p, 3);
+          el.textContent = Math.round(start + (end - start) * k) + (p === 1 ? suf : '');
+          if (p < 1) requestAnimationFrame(tick);
+        })(performance.now());
+      });
+    }, { threshold: 0.6 });
+    nums.forEach(function (n) { n.textContent = (parseInt(n.dataset.count, 10) > 1000 ? parseInt(n.dataset.count, 10) - 39 : 0); cio.observe(n); });
+  }
+
+  /* ---------- carousel dots on phone */
+  $$('.scroller').forEach(function (sc) {
+    var dots = document.createElement('div'); dots.className = 'dots'; dots.setAttribute('aria-hidden', 'true');
+    sc.after(dots);
+    var build = function () {
+      var items = $$(':scope > :not([hidden])', sc);
+      dots.innerHTML = items.map(function () { return '<i></i>'; }).join('');
+      update();
+    };
+    var update = function () {
+      var items = $$(':scope > :not([hidden])', sc); if (!items.length) return;
+      var w = items[0].getBoundingClientRect().width + 16, i = Math.round(sc.scrollLeft / w);
+      $$('i', dots).forEach(function (d, j) { d.classList.toggle('on', j === Math.min(i, items.length - 1)); });
+    };
+    sc.addEventListener('scroll', function () { requestAnimationFrame(update); }, { passive: true });
+    sc.addEventListener('filtered', build);
+    build();
+  });
+
+  /* ---------- phone action bar: step aside while typing or menu open */
+  var mbar = $('.mbar');
+  if (mbar) {
+    document.addEventListener('focusin', function (e) { if (e.target.matches('input:not([type=radio]),textarea')) mbar.classList.add('away'); });
+    document.addEventListener('focusout', function () { setTimeout(function () { if (!document.activeElement.matches('input:not([type=radio]),textarea')) mbar.classList.remove('away'); }, 50); });
+  }
 
   var yr = $('#yr'); if (yr) yr.textContent = new Date().getFullYear();
 })();
