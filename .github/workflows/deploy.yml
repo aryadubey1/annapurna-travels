@@ -1,0 +1,30 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-annapurna
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          command_timeout: 10m
+          script: |
+            set -e
+            cd /var/www/annapurna            # deploy-only checkout; edit code elsewhere
+            git fetch -q origin main
+            git reset -q --hard origin/main
+            bash deploy.sh
+            curl -sf -o /dev/null https://annapurna.clarifyweb.com/ && echo "✅ annapurna.clarifyweb.com is up"
